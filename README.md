@@ -5,8 +5,8 @@ This is a small project/hack that uses AspectJ to track Tomcat's DBCP connection
 ```
 +++ getConnection(52d02201): MyDAOSQL.getConnection(69) > MyDAOSQL.getCustomerByName(568) > ...
 --- retConnection(52d02201): MyDAOSQL.getCustomerByName(568) > CustomerController.getCustomer(67) > ...
-+++ getConnection(52d02201): MyDAOSQL.getConnection(69) > MyDAOSQL.getBasket(568) > ...
---- retConnection(52d02201): MyDAOSQL.getBasket(568) > CustomerController.getBasket(67) > ...
++++ getConnection(7100721a): MyDAOSQL.getConnection(69) > MyDAOSQL.getBasket(568) > ...
+--- retConnection(7100721a): MyDAOSQL.getBasket(568) > CustomerController.getBasket(67) > ...
 ```
 
 In the sample above, all connections have matching getConnection and retConnection entries, which means that all is workign well. It is usually very easy to spot a connection that is not closing by the lack of a matching **retConnection**. The brief call trace tells you which class/method is responsible for opening a connection.
@@ -19,7 +19,7 @@ The connection id is that of the wrappe that DBCP uses and not the underlying JD
 
 ###Requirements
 * This is project is tested with **apache tomcat 8** only.
-* It just weaves two loggin methods around the getConnection and connection.close methods of the DBCP
+* It just weaves two logging methods around the getConnection and connection.close methods of the DBCP
 
 ###How to use it
 ```
@@ -34,8 +34,8 @@ cp target/dbcp-conn-log-1.0-SNAPSHOT.jar PATH_TO_TOMCAT_8/lib/tomcat-dbcp.jar
 You will now be able to see the connections
 
 ##More details
-###The problem**
-Tomcat's DBCP is great but I doesn't come with much logging. If you work in a large application and somewhere, some code leaves a a connection open, your connection pool will run out of connections (removing abandoned is not always efficient). This code may even be from a 3rd party plugin which makes things even more hard to debug.
+###The problem
+Tomcat's DBCP is great but it doesn't come with much helpful logging. If you work with a large application and somewhere, some code leaves a connection open, your connection pool will run out of connections (removing abandoned is not always efficient) when load increases. This code may even be from a 3rd party plugin which makes things even more hard to debug.
 
 I needed a very simple way to tell where in my code a connection is opened (acutally borrowed from the pool) and if and where in the code this same connection is closed (actually returned to the pool). My first idea to compile my own DBCP failed as tomcat uses its own version and I wasnot in the mood to compile my own tomcat just for this.
 
