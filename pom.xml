@@ -1,0 +1,69 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>net.chronakis.tomcat</groupId>
+  <artifactId>dbcp-conn-log</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>Simple DBCP Connection Logger for tomcat</name>
+  <url></url>
+  <scm>
+    <connection>scm:git:https://github.com/chronakis/dbcp-conn-log.git</connection>
+    <developerConnection>scm:git:https://github.com/chronakis/dbcp-conn-log.git</developerConnection>
+    <url>https://github.com/chronakis/dbcp-conn-log</url>
+  </scm>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+	
+	<build>
+	    <plugins>
+	      <plugin>
+	        <groupId>org.codehaus.mojo</groupId>
+	        <artifactId>aspectj-maven-plugin</artifactId>
+	        <version>1.8</version>
+	        <configuration>
+              <complianceLevel>1.7</complianceLevel>
+              <source>1.7</source>
+              <target>1.7</target>
+ 	          <weaveDependencies>
+	            <weaveDependency>
+	              <groupId>org.apache.tomcat</groupId>
+	              <artifactId>tomcat-dbcp</artifactId>
+	            </weaveDependency>
+	          </weaveDependencies>
+	        </configuration>
+	        <executions>
+	          <execution>
+	            <goals>
+	              <goal>compile</goal>
+	            </goals>
+	          </execution>
+	        </executions>
+	      </plugin>
+	    </plugins>
+  </build>
+  
+  <dependencies>
+  	<!-- To Weave -->
+	<dependency>
+		<groupId>org.apache.tomcat</groupId>
+		<artifactId>tomcat-dbcp</artifactId>
+		<version>8.0.14</version>
+	</dependency>
+	<dependency>
+		<groupId>org.aspectj</groupId>
+		<artifactId>aspectjrt</artifactId>
+		<version>1.8.7</version>
+	</dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.12</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+</project>
