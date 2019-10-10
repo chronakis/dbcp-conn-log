@@ -1,6 +1,6 @@
-#dbcp-conn-log
+# dbcp-conn-log
 
-##Quick start
+## Quick start
 This is a small project/hack that uses AspectJ to track Tomcat's DBCP connections fate. It just prints in the stdout a line each time a connection is requested from the pool and when the connection is closed (returned to the pool). The outpout looks like this:
 ```
 +++ getConnection(52d02201): MyDAOSQL.getConnection(69) > MyDAOSQL.getCustomerByName(568) > ...
@@ -17,11 +17,11 @@ In the sample above, all connections have matching getConnection and retConnecti
 ```
 The connection id is that of the wrappe that DBCP uses and not the underlying JDBC, so it changes after every request. The wrapped connection may be the same.
 
-###Requirements
+### Requirements
 * This is project is tested with **apache tomcat 8** only.
 * It just weaves two logging methods around the getConnection and connection.close methods of the DBCP
 
-###How to use it
+### How to use it
 ```
 # You will need a tomcat 8 (binary installation) somewhere in your system
 # Backup tomcat's original lib/tomcat-dbcp.jar somewhere, this tool replaces it with the logged version
@@ -33,22 +33,22 @@ cp target/dbcp-conn-log-1.0-SNAPSHOT.jar PATH_TO_TOMCAT_8/lib/tomcat-dbcp.jar
 ```
 You will now be able to see the connections
 
-##More details
-###The problem
+## More details
+### The problem
 Tomcat's DBCP is great but it doesn't come with much helpful logging. If you work with a large application and somewhere, some code leaves a connection open, your connection pool will run out of connections (removing abandoned is not always efficient) when load increases. This code may even be from a 3rd party plugin which makes things even more hard to debug.
 
 I needed a very simple way to tell where in my code a connection is opened (acutally borrowed from the pool) and if and where in the code this same connection is closed (actually returned to the pool). My first idea to compile my own DBCP failed as tomcat uses its own version and I wasnot in the mood to compile my own tomcat just for this.
 
-###The solution
+### The solution
 Use AspectJ to weave sipmle logging around the methods taht gets and return a connection to the pool. Log an identifier to match connections and a call trace to see where in the code this happens.
 
-###How it is done
+### How it is done
 * There are two wrapper methods that add logging
 * The pom.xml is fetching tomcat's dbcp jar from maven repo
 * AspectJ plugin is weaving the loging around the target methonds and repackes the tomcat-dbcp.ar
 * Replace original tomcat-dbcp.jar with the one provided
 
-###Configuration
+### Configuration
 There is very little cofiguration for this software and it is done via environment variables
 
 | VARIABLE         | Values        | Default | Description  |
@@ -58,16 +58,16 @@ There is very little cofiguration for this software and it is done via environme
 | EXC_DBCP_PACKAGE | true/false | true |Do not print any DBCP internal calls. Recommended |
 | MAX_TRACE        | ingeger    | 5 |The number of calls to print. You usually don't need more than 5 |
 
-###Building
+### Building
 The only thing you need to do is run **mvn package**. Maven aspectj plugin will do the rest.
 
-###Deploying
+### Deploying
 You will need to replace tomcat's lig/tomcat-dbcp.jar with the one this tool builds
 
-###Modifying
+### Modifying
 The code is very very short. If you want to change the logging format or e.g. use somethig like slf4j just modify it
 
-##Conclusion
+## Conclusion
 This does not look like a tool worth publishing on github but for me it ended a 3 day & 3 night hunt for a runaway JDBC connection. Using this hack, I found a third party plugin that was leaving one connnection open in some specific circumstances.
 
 If there is another out of the box way of doing this and my whole effort was pointless, please let me know!
