@@ -26,14 +26,18 @@
 	        <artifactId>aspectj-maven-plugin</artifactId>
 	        <version>1.8</version>
 	        <configuration>
-              <complianceLevel>1.7</complianceLevel>
-              <source>1.7</source>
-              <target>1.7</target>
+        <complianceLevel>1.8</complianceLevel>
+        <source>1.8</source>
+        <target>1.8</target>
  	          <weaveDependencies>
 	            <weaveDependency>
 	              <groupId>org.apache.tomcat</groupId>
 	              <artifactId>tomcat-dbcp</artifactId>
 	            </weaveDependency>
+	<weaveDependency>
+		<groupId>org.aspectj</groupId>
+		<artifactId>aspectjrt</artifactId>
+	</weaveDependency>
 	          </weaveDependencies>
 	        </configuration>
 	        <executions>
